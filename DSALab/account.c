@@ -52,7 +52,7 @@ int main()
     int n;
     printf("Enter number of accounts: ");
     scanf("%d", &n);
-    struct SavingsAccount accounts[n];
+    struct SavingsAccount *accounts = (struct SavingsAccount *)malloc(n * sizeof(struct SavingsAccount));
     srand(time(0));
     db total_interest = 0;
     forn(i, n)
