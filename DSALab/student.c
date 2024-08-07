@@ -118,10 +118,34 @@ int main()
     {
         s[i] = *createStudent();
     }
-    failAndPass(s, n);
-    maxMaths(s, n);
-    maxPhysics(s, n);
-    maxAverage(s, n);
-    print(s, n);
+    int choice;
+    printf("1. Fail and Pass\n2. Max marks in maths\n3. Max marks in physics\n4. Max average marks\n5. Print\n");
+    printf("Enter choice: ");
+    scanf("%d", &choice);
+    switch (choice)
+    {
+    case 1:
+        failAndPass(s, n);
+        break;
+    case 2:
+        maxMaths(s, n);
+        break;
+    case 3:
+        maxPhysics(s, n);
+        break;
+    case 4:
+        maxAverage(s, n);
+        break;
+    case 5:
+        print(s, n);
+        break;
+    default:
+        printf("Invalid choice\n");
+    }
+    // failAndPass(s, n);
+    // maxMaths(s, n);
+    // maxPhysics(s, n);
+    // maxAverage(s, n);
+    // print(s, n);
     return 0;
 }
