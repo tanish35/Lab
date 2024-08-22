@@ -1,109 +1,69 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-struct Node
-{
-    int coef;
-    int exp;
-    struct Node *next;
-};
+#define MAX_EXP 100
 
-struct Node *createNode(int coef, int exp)
+void addPolynomials(int poly1[], int poly2[], int result[], int maxExp1, int maxExp2)
 {
-    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
-    newNode->coef = coef;
-    newNode->exp = exp;
-    newNode->next = NULL;
-    return newNode;
-}
+    int i;
 
-void insertNode(struct Node **result, int coef, int exp)
-{
-    struct Node *newNode = createNode(coef, exp);
-    if (*result == NULL)
+    for (i = 0; i < MAX_EXP; i++)
     {
-        *result = newNode;
+        result[i] = 0;
     }
-    else
+
+    for (i = 0; i <= maxExp1; i++)
     {
-        struct Node *temp = *result;
-        while (temp->next != NULL)
-        {
-            temp = temp->next;
-        }
-        temp->next = newNode;
+        result[i] += poly1[i];
+    }
+
+    for (i = 0; i <= maxExp2; i++)
+    {
+        result[i] += poly2[i];
     }
 }
 
-struct Node *addPolynomials(struct Node *poly1, struct Node *poly2)
+void printPolynomial(int poly[], int maxExp)
 {
-    struct Node *result = NULL;
-    struct Node *p1 = poly1;
-    struct Node *p2 = poly2;
+    int i;
+    int first = 1;
 
-    while (p1 != NULL && p2 != NULL)
+    for (i = maxExp; i >= 0; i--)
     {
-        if (p1->exp > p2->exp)
+        if (poly[i] != 0)
         {
-            insertNode(&result, p1->coef, p1->exp);
-            p1 = p1->next;
-        }
-        else if (p1->exp < p2->exp)
-        {
-            insertNode(&result, p2->coef, p2->exp);
-            p2 = p2->next;
-        }
-        else
-        {
-            int sumCoef = p1->coef + p2->coef;
-            if (sumCoef != 0)
+            if (!first)
             {
-                insertNode(&result, sumCoef, p1->exp);
+                printf(" + ");
             }
-            p1 = p1->next;
-            p2 = p2->next;
+            printf("%dx^%d", poly[i], i);
+            first = 0;
         }
     }
 
-    while (p1 != NULL)
+    if (first)
     {
-        insertNode(&result, p1->coef, p1->exp);
-        p1 = p1->next;
-    }
-
-    while (p2 != NULL)
-    {
-        insertNode(&result, p2->coef, p2->exp);
-        p2 = p2->next;
-    }
-
-    return result;
-}
-
-void printPolynomial(struct Node *poly)
-{
-    while (poly != NULL)
-    {
-        printf("%dx^%d", poly->coef, poly->exp);
-        poly = poly->next;
-        if (poly != NULL)
-            printf(" + ");
+        printf("0");
     }
     printf("\n");
 }
 
 int main()
 {
-    struct Node *poly1 = createNode(5, 2);
-    poly1->next = createNode(4, 1);
-    poly1->next->next = createNode(2, 0);
+    int poly1[MAX_EXP] = {0};
+    int poly2[MAX_EXP] = {0};
+    int result[MAX_EXP] = {0};
+    int maxExp1 = 2, maxExp2 = 1;
 
-    struct Node *poly2 = createNode(5, 1);
-    poly2->next = createNode(5, 0);
+    poly1[2] = 5;
+    poly1[1] = 4;
+    poly1[0] = 2;
 
-    struct Node *result = addPolynomials(poly1, poly2);
+    poly2[1] = 5;
+    poly2[0] = 5;
 
-    printPolynomial(result);
+    addPolynomials(poly1, poly2, result, maxExp1, maxExp2);
+
+    printPolynomial(result, maxExp1 > maxExp2 ? maxExp1 : maxExp2);
 
     return 0;
 }
