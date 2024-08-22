@@ -1,99 +1,64 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-struct Node
-{
-    int digit;
-    struct Node *next;
-};
+#define MAX_DIGITS 1001
 
-struct Node *createNode(int digit)
+void addLargeNumbers(char num1[], char num2[], char result[])
 {
-    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
-    newNode->digit = digit;
-    newNode->next = NULL;
-    return newNode;
+    int len1 = strlen(num1);
+    int len2 = strlen(num2);
+    int carry = 0;
+    int i, j, k;
+
+    strrev(num1);
+    strrev(num2);
+
+    for (i = 0; i < MAX_DIGITS; i++)
+    {
+        result[i] = '0';
+    }
+
+    for (i = 0, j = 0, k = 0; i < len1 || j < len2 || carry; i++, j++, k++)
+    {
+        int digit1 = (i < len1) ? num1[i] - '0' : 0;
+        int digit2 = (j < len2) ? num2[j] - '0' : 0;
+        int sum = digit1 + digit2 + carry;
+
+        result[k] = (sum % 10) + '0';
+        carry = sum / 10;
+    }
+
+    result[k] = '\0';
+    strrev(result);
 }
 
-void insertAtEnd(struct Node **head, int digit)
+void printNumber(char num[])
 {
-    struct Node *newNode = createNode(digit);
-    if (*head == NULL)
+    int i = 0;
+    while (num[i] == '0')
     {
-        *head = newNode;
+        i++;
+    }
+    if (num[i] == '\0')
+    {
+        printf("0");
     }
     else
     {
-        struct Node *temp = *head;
-        while (temp->next != NULL)
-        {
-            temp = temp->next;
-        }
-        temp->next = newNode;
+        printf("%s", num + i);
     }
-}
-
-struct Node *addLargeNumbers(struct Node *num1, struct Node *num2)
-{
-    struct Node *result = NULL;
-    struct Node *p1 = num1, *p2 = num2;
-    int carry = 0;
-
-    while (p1 != NULL || p2 != NULL)
-    {
-        int sum = carry;
-        if (p1 != NULL)
-        {
-            sum += p1->digit;
-            p1 = p1->next;
-        }
-        if (p2 != NULL)
-        {
-            sum += p2->digit;
-            p2 = p2->next;
-        }
-        carry = sum / 10;
-        insertAtEnd(&result, sum % 10);
-    }
-
-    if (carry > 0)
-    {
-        insertAtEnd(&result, carry);
-    }
-
-    return result;
-}
-
-void printNumber(struct Node *head)
-{
-    if (head == NULL)
-        return;
-    printNumber(head->next);
-    printf("%d", head->digit);
 }
 
 int main()
 {
-    char numStr1[1001], numStr2[1001];
-    struct Node *num1 = NULL, *num2 = NULL;
+    char num1[MAX_DIGITS], num2[MAX_DIGITS], result[MAX_DIGITS];
 
     printf("Enter the first large number: ");
-    scanf("%s", numStr1);
+    scanf("%s", num1);
     printf("Enter the second large number: ");
-    scanf("%s", numStr2);
+    scanf("%s", num2);
 
-    for (int i = strlen(numStr1) - 1; i >= 0; i--)
-    {
-        insertAtEnd(&num1, numStr1[i] - '0');
-    }
-
-    for (int i = strlen(numStr2) - 1; i >= 0; i--)
-    {
-        insertAtEnd(&num2, numStr2[i] - '0');
-    }
-
-    struct Node *result = addLargeNumbers(num1, num2);
+    addLargeNumbers(num1, num2, result);
 
     printf("Sum: ");
     printNumber(result);
