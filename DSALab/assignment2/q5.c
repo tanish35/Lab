@@ -1,65 +1,88 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#define MAX_DEGREE 10
+typedef struct term {
+    float coeff;
+    int expo;
+} term;
 
-void multiplyPolynomials(int poly1[], int poly2[], int result[], int size1, int size2)
-{
-    for (int i = 0; i < MAX_DEGREE; i++)
-    {
-        result[i] = 0;
-    }
+typedef struct poly {
+    term *terms;
+    int numTerms;
+} poly;
 
-    for (int i = 0; i < size1; i++)
-    {
-        for (int j = 0; j < size2; j++)
-        {
-            result[i + j] += poly1[i] * poly2[j];
-        }
+poly createPoly(int maxTerms) {
+    poly p;
+    p.numTerms = 0;
+    p.terms = (term *)malloc(maxTerms * sizeof(term));
+    return p;
+}
+
+void addTerm(poly *p, float coeff, int expo) {
+    if (coeff != 0) {
+        p->terms[p->numTerms].coeff = coeff;
+        p->terms[p->numTerms].expo = expo;
+        p->numTerms++;
     }
 }
 
-void printPolynomial(int poly[], int size)
-{
-    int first = 1;
-    for (int i = 0; i < size; i++)
-    {
-        if (poly[i] != 0)
-        {
-            if (!first)
-            {
-                printf(" + ");
+poly multiplyPolynomials(poly *p1, poly *p2) {
+    poly result = createPoly(p1->numTerms * p2->numTerms);
+
+    for (int i = 0; i < p1->numTerms; i++) {
+        for (int j = 0; j < p2->numTerms; j++) {
+            int expo = p1->terms[i].expo + p2->terms[j].expo;
+            float coeff = p1->terms[i].coeff * p2->terms[j].coeff;
+
+            // Add or combine terms with the same exponent
+            int found = 0;
+            for (int k = 0; k < result.numTerms; k++) {
+                if (result.terms[k].expo == expo) {
+                    result.terms[k].coeff += coeff;
+                    found = 1;
+                    break;
+                }
             }
-            printf("%dx^%d", poly[i], i);
-            first = 0;
+
+            if (!found) {
+                addTerm(&result, coeff, expo);
+            }
         }
     }
-    if (first)
-    {
+
+    return result;
+}
+
+void printPolynomial(poly p) {
+    int first = 1;
+    for (int i = 0; i < p.numTerms; i++) {
+        if (!first) {
+            printf(" + ");
+        }
+        printf("%.2fx^%d", p.terms[i].coeff, p.terms[i].expo);
+        first = 0;
+    }
+    if (first) {
         printf("0");
     }
     printf("\n");
 }
 
-int main()
-{
-    int poly1[MAX_DEGREE] = {0};
-    int poly2[MAX_DEGREE] = {0};
-    int result[2 * MAX_DEGREE] = {0};
+int main() {
+    poly poly1 = createPoly(3);
+    poly poly2 = createPoly(2);
 
-    poly1[2] = 3;
-    poly1[1] = 5;
-    poly1[0] = 6;
+    addTerm(&poly1, 3, 2);
+    addTerm(&poly1, 5, 1);
+    addTerm(&poly1, 6, 0);
 
-    poly2[1] = 6;
-    poly2[0] = 8;
+    addTerm(&poly2, 6, 1);
+    addTerm(&poly2, 8, 0);
 
-    int size1 = 3;
-    int size2 = 2;
-
-    multiplyPolynomials(poly1, poly2, result, size1, size2);
+    poly result = multiplyPolynomials(&poly1, &poly2);
 
     printf("Resultant Polynomial:\n");
-    printPolynomial(result, size1 + size2 - 1);
+    printPolynomial(result);
 
     return 0;
 }

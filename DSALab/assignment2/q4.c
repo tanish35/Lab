@@ -1,23 +1,49 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
-#define MAX_EXP 100
+typedef struct term {
+    float coeff;
+    int expo;
+} term;
 
-int main()
-{
-    int poly[MAX_EXP] = {0};
-    int x = 2;
-    int maxExp = 2;
-    int result = 0;
+typedef struct poly {
+    term *terms;
+    int numTerms;
+} poly;
 
-    poly[2] = 3;
-    poly[1] = 5;
-    poly[0] = 6;
+poly createPoly(int maxTerms) {
+    poly p;
+    p.numTerms = 0;
+    p.terms = (term *)malloc(maxTerms * sizeof(term));
+    return p;
+}
 
-    for (int i = 0; i <= maxExp; i++)
-    {
-        result += poly[i] * pow(x, i);
+void addTerm(poly *p, float coeff, int expo) {
+    if (coeff != 0) {
+        p->terms[p->numTerms].coeff = coeff;
+        p->terms[p->numTerms].expo = expo;
+        p->numTerms++;
     }
+}
+
+int evaluatePolynomial(poly p, int x) {
+    int result = 0;
+    for (int i = 0; i < p.numTerms; i++) {
+        result += p.terms[i].coeff * pow(x, p.terms[i].expo);
+    }
+    return result;
+}
+
+int main() {
+    poly poly1 = createPoly(3);
+    int x = 2;
+
+    addTerm(&poly1, 3, 2);
+    addTerm(&poly1, 5, 1);
+    addTerm(&poly1, 6, 0);
+
+    int result = evaluatePolynomial(poly1, x);
 
     printf("Polynomial evaluated at x = %d: %d\n", x, result);
 
