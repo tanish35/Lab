@@ -1,0 +1,107 @@
+CREATE TABLE MARKS (
+    marks_id NUMBER PRIMARY KEY,
+    student_id NUMBER,
+    subject_id NUMBER,
+    grade CHAR(1),
+    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id), 
+    FOREIGN KEY (subject_id) REFERENCES SUBJECT(subject_id) 
+);
+
+CREATE TABLE SUBJECT (
+    subject_id NUMBER PRIMARY KEY,
+    subject_name VARCHAR2(100) NOT NULL,
+    teacher_name VARCHAR2(100)
+);
+
+CREATE TABLE COURSE (
+    course_id NUMBER PRIMARY KEY,
+    course_name VARCHAR2(100) NOT NULL,
+    intake_capacity NUMBER
+);
+
+CREATE TABLE STUDENT (
+    enroll_id NUMBER PRIMARY KEY,
+    student_name VARCHAR2(100) NOT NULL
+);
+
+CREATE TABLE ENROLL (
+    enroll_id NUMBER PRIMARY KEY,
+    student_id NUMBER,
+    course_id NUMBER,
+    enroll_date DATE,
+    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES COURSE(course_id) ON DELETE CASCADE
+);
+
+CREATE TABLE ENROLL_SUBJECT (
+    enroll_id NUMBER,
+    subject_id NUMBER,
+    PRIMARY KEY (enroll_id, subject_id),
+    FOREIGN KEY (enroll_id) REFERENCES ENROLL(enroll_id),
+    FOREIGN KEY (subject_id) REFERENCES SUBJECT(subject_id)
+);
+
+
+
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (1, 'Lana Del Ray');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (2, 'Ellie Goulding');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (3, 'Taylor Swift');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (4, 'Halsey');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (5, 'Tate McRae');
+
+INSERT INTO COURSE (course_id, course_name, intake_capacity) VALUES (10, 'Alternative Pop', 50);
+INSERT INTO COURSE (course_id, course_name, intake_capacity) VALUES (20, 'Indie Pop', 40);
+INSERT INTO COURSE (course_id, course_name, intake_capacity) VALUES (30, 'Country Rock', 30);
+INSERT INTO COURSE (course_id, course_name, intake_capacity) VALUES (40, 'Electronic Rock', 20);
+INSERT INTO COURSE (course_id, course_name, intake_capacity) VALUES (50, 'Dance Pop', 25);
+
+INSERT INTO SUBJECT (subject_id, subject_name, teacher_name) VALUES (101, 'Guitar', 'Prof. X');
+INSERT INTO SUBJECT (subject_id, subject_name, teacher_name) VALUES (102, 'Keyboard', 'Prof. Y');
+INSERT INTO SUBJECT (subject_id, subject_name, teacher_name) VALUES (103, 'Bass', 'Prof. Z');
+INSERT INTO SUBJECT (subject_id, subject_name, teacher_name) VALUES (104, 'Cello', 'Prof. A');
+INSERT INTO SUBJECT (subject_id, subject_name, teacher_name) VALUES (105, 'Tuba', 'Prof. B');
+
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (1, 10, TO_DATE('2024-09-01', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (2, 20, TO_DATE('2024-09-02', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (3, 30, TO_DATE('2024-09-03', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (4, 40, TO_DATE('2024-09-04', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (5, 50, TO_DATE('2024-09-05', 'YYYY-MM-DD'));
+
+
+INSERT INTO MARKS (marks_id, enroll_id, subject_id,grade) VALUES (1, 1, 101,  'A');
+INSERT INTO MARKS (marks_id, enroll_id, subject_id, grade) VALUES (2, 2, 102,  'B');
+INSERT INTO MARKS (marks_id, enroll_id, subject_id, grade) VALUES (3, 3, 103,  'A');
+INSERT INTO MARKS (marks_id, enroll_id, subject_id, grade) VALUES (4, 4, 104,  'B');
+INSERT INTO MARKS (marks_id, enroll_id, subject_id, grade) VALUES (5, 5, 105,  'D');
+
+
+
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (6, 'Juice Wrld');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (7, 'NF');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (8, 'Eminem');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (9, 'Weeknd');
+INSERT INTO STUDENT (enroll_id, student_name) VALUES (10, 'Kendrick');
+
+INSERT INTO COURSE (course_id, course_name, intake_capacity) VALUES (60, 'Rap', 25);
+
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (6, 60, TO_DATE('2024-09-01', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (7, 60, TO_DATE('2024-09-02', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (8, 60, TO_DATE('2024-09-03', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (9, 60, TO_DATE('2024-09-04', 'YYYY-MM-DD'));
+INSERT INTO ENROLL (enroll_id, course_id, enroll_date) VALUES (10, 60, TO_DATE('2024-09-05', 'YYYY-MM-DD'));
+
+
+
+
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (1, 101);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (2, 101);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (3, 102);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (4, 102);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (5, 103);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (6, 103);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (7, 104);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (8, 104);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (9, 105);
+INSERT INTO ENROLL_SUBJECT (enroll_id, subject_id) VALUES (10, 105);
+
+INSERT INTO COURSE (course_id, course_name, intake_capacity) VALUES (70, 'Jazz', 50);

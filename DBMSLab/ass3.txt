@@ -1,0 +1,75 @@
+ALTER TABLE ENROLL ADD (enroll_date DATE);
+
+ALTER TABLE COURSE MODIFY (course_name VARCHAR2(100) NOT NULL);
+
+SELECT course_id, COUNT(*) AS student_count
+FROM ENROLL
+GROUP BY course_id
+HAVING COUNT(*) > 3;
+
+SELECT 
+    S.student_name,
+    SU.subject_name,
+    M.grade
+FROM 
+    STUDENT S, 
+    ENROLL E, 
+    ENROLL_SUBJECT ES, 
+    SUBJECT SU,
+    MARKS M
+WHERE 
+    S.enroll_id = E.enroll_id
+    AND E.enroll_id = ES.enroll_id
+    AND E.enroll_id = M.enroll_id
+    AND ES.subject_id = SU.subject_id
+	AND S.enroll_id= 1
+    
+
+SELECT course_id, COUNT(*) AS student_count
+FROM ENROLL
+GROUP BY course_id
+ORDER BY student_count DESC
+FETCH FIRST 1 ROWS ONLY;
+
+SELECT C.course_id, C.course_name
+FROM COURSE C
+WHERE C.course_id NOT IN (
+    SELECT E.course_id
+    FROM ENROLL E
+);
+
+DELETE FROM COURSE WHERE course_id = 30;
+
+ALTER TABLE COURSE RENAME TO DEPARTMENT;
+
+UPDATE MARKS
+SET grade = 'B'
+WHERE enroll_id IN (
+    SELECT enroll_id
+    FROM ENROLL
+    WHERE enroll_id IN (
+        SELECT enroll_id
+        FROM ENROLL_SUBJECT
+        WHERE subject_id = (
+            SELECT subject_id
+            FROM SUBJECT
+            WHERE subject_name = 'Guitar'   //change this to dbms
+        )
+    )
+);
+
+DELETE FROM STUDENT
+WHERE enroll_id IN (
+    SELECT enroll_id 
+    FROM ENROLL 
+    WHERE course_id = (
+        SELECT course_id 
+        FROM COURSE 
+        WHERE course_name = 'IT'
+    )
+);
+
+UPDATE ENROLL
+SET enroll_date = TO_DATE('16-08-2018', 'DD-MM-YYYY')
+WHERE enroll_id = 18069;
+
