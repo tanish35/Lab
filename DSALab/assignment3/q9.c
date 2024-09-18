@@ -3,124 +3,63 @@
 
 typedef struct Stack
 {
-    int *arr;
+    int *array;
     int top;
-    int size;
 } Stack;
 
-typedef struct Queue
+void enqueue(int data, Stack **stack1, Stack **stack2)
 {
-    Stack *s1;
-    Stack *s2;
-} Queue;
-
-Stack *createStack(int size)
-{
-    Stack *stack = (Stack *)malloc(sizeof(Stack));
-    stack->size = size;
-    stack->top = -1;
-    stack->arr = (int *)malloc(stack->size * sizeof(int));
-    return stack;
-}
-
-int isFull(Stack *stack)
-{
-    return stack->top == stack->size - 1;
-}
-
-int isEmpty(Stack *stack)
-{
-    return stack->top == -1;
-}
-
-void push(Stack *stack, int data)
-{
-    if (!isFull(stack))
+    while ((*stack1)->top != -1)
     {
-        stack->arr[++stack->top] = data;
+        (*stack2)->top++;
+        (*stack2)->array[(*stack2)->top] = (*stack1)->array[(*stack1)->top];
+        (*stack1)->top--;
+    }
+    (*stack1)->top++;
+    (*stack1)->array[(*stack1)->top] = data;
+    while ((*stack2)->top != -1)
+    {
+        (*stack1)->top++;
+        (*stack1)->array[(*stack1)->top] = (*stack2)->array[(*stack2)->top];
+        (*stack2)->top--;
     }
 }
 
-int pop(Stack *stack)
+void dequeue(Stack **stack1)
 {
-    if (!isEmpty(stack))
+    if ((*stack1)->top == -1)
     {
-        return stack->arr[stack->top--];
+        printf("UnderFlow\n");
+        return;
     }
-    return -1;
+    printf("%d\n", (*stack1)->array[(*stack1)->top]);
+    (*stack1)->top--;
 }
 
-Queue *createQueue(int size)
+void print(Stack *stack1)
 {
-    Queue *queue = (Queue *)malloc(sizeof(Queue));
-    queue->s1 = createStack(size);
-    queue->s2 = createStack(size);
-    return queue;
-}
-
-void enqueue(Queue *queue, int data)
-{
-    push(queue->s1, data);
-}
-
-int dequeue(Queue *queue)
-{
-    if (isEmpty(queue->s2))
+    for (int i = 0; i <= stack1->top; i++)
     {
-        while (!isEmpty(queue->s1))
-        {
-            push(queue->s2, pop(queue->s1));
-        }
-    }
-    return pop(queue->s2);
-}
-
-void inputQueue(Queue *queue, int n)
-{
-    int data;
-    for (int i = 0; i < n; i++)
-    {
-        printf("Enter element %d: ", i + 1);
-        scanf("%d", &data);
-        enqueue(queue, data);
-    }
-}
-
-void displayQueue(Queue *queue)
-{
-    if (isEmpty(queue->s2))
-    {
-        while (!isEmpty(queue->s1))
-        {
-            push(queue->s2, pop(queue->s1));
-        }
-    }
-    for (int i = queue->s2->top; i >= 0; i--)
-    {
-        printf("%d ", queue->s2->arr[i]);
+        printf("%d ", stack1->array[i]);
     }
     printf("\n");
 }
 
 int main()
 {
-    int size, n;
-    printf("Enter the size of the queue: ");
-    scanf("%d", &size);
-
-    Queue *queue = createQueue(size);
-
-    printf("Enter the number of elements to enqueue: ");
-    scanf("%d", &n);
-
-    inputQueue(queue, n);
-
-    printf("Queue contents: ");
-    displayQueue(queue);
-
-    printf("Dequeued: %d\n", dequeue(queue));
-    printf("Queue contents after dequeue: ");
-    displayQueue(queue);
+    Stack *stack1 = (Stack *)malloc(sizeof(Stack));
+    stack1->array = (int *)malloc(100 * sizeof(int));
+    stack1->top = -1;
+    Stack *stack2 = (Stack *)malloc(sizeof(Stack));
+    stack2->array = (int *)malloc(100 * sizeof(int));
+    stack2->top = -1;
+    enqueue(1, &stack1, &stack2);
+    enqueue(2, &stack1, &stack2);
+    enqueue(3, &stack1, &stack2);
+    enqueue(4, &stack1, &stack2);
+    print(stack1);
+    dequeue(&stack1);
+    print(stack1);
 
     return 0;
 }

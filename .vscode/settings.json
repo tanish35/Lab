@@ -1,5 +1,6 @@
 {
   "files.associations": {
-    "compare": "cpp"
+    "compare": "cpp",
+    "stdlib.h": "c"
   }
 }
