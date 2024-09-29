@@ -37,7 +37,7 @@ void evaulatePostfix(char str[100])
                 break;
             case '-':
                 stack->top++;
-                stack->array[stack->top] = a - b;
+                stack->array[stack->top] = b - a;
                 break;
             case '*':
                 stack->top++;
@@ -45,7 +45,7 @@ void evaulatePostfix(char str[100])
                 break;
             case '/':
                 stack->top++;
-                stack->array[stack->top] = a / b;
+                stack->array[stack->top] = b / a;
                 break;
             }
         }
