@@ -15,6 +15,7 @@ TreeNode *createNode(int data)
     newNode->left = newNode->right = NULL;
     return newNode;
 }
+
 TreeNode *insertNode(TreeNode *root, int data)
 {
     if (root == NULL)
@@ -32,39 +33,6 @@ TreeNode *insertNode(TreeNode *root, int data)
     return root;
 }
 
-// Iterative insertion
-TreeNode *insertNodeIterative(TreeNode *root, int data)
-{
-    TreeNode *newNode = createNode(data);
-    TreeNode *parent = NULL;
-    TreeNode *current = root;
-    while (current != NULL)
-    {
-        parent = current;
-        if (data < current->data)
-        {
-            current = current->left;
-        }
-        else
-        {
-            current = current->right;
-        }
-    }
-    if (parent == NULL)
-    {
-        return newNode;
-    }
-    if (data < parent->data)
-    {
-        parent->left = newNode;
-    }
-    else
-    {
-        parent->right = newNode;
-    }
-    return root;
-}
-
 void inorderTraversal(TreeNode *root)
 {
     if (root != NULL)
@@ -75,87 +43,87 @@ void inorderTraversal(TreeNode *root)
     }
 }
 
-TreeNode *inorderSuccessor(TreeNode *root, int data, TreeNode **succ)
+TreeNode *findInorderSuccessor(TreeNode *root)
 {
-    if (root == NULL)
+    TreeNode *current = root;
+    while (current && current->left != NULL)
     {
-        return root;
+        current = current->left;
     }
-    if (data >= root->data)
-    {
-        return inorderSuccessor(root->right, data, succ);
-    }
-    else if (data < root->data)
-    {
-        *(succ) = root;
-        return inorderSuccessor(root->left, data, succ);
-    }
-    return root;
+    return current;
 }
 
-TreeNode *inorderPredecessor(TreeNode *root, int data, TreeNode **pred)
+TreeNode *deleteNode(TreeNode *root, int data)
 {
     if (root == NULL)
     {
         return root;
     }
-    if (data <= root->data)
+
+    if (data < root->data)
     {
-        return inorderPredecessor(root->left, data, pred);
+        root->left = deleteNode(root->left, data);
     }
     else if (data > root->data)
     {
-        *(pred) = root;
-        return inorderPredecessor(root->right, data, pred);
+        root->right = deleteNode(root->right, data);
+    }
+    else
+    {
+        if (root->left == NULL)
+        {
+            TreeNode *temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL)
+        {
+            TreeNode *temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        TreeNode *successor = findInorderSuccessor(root->right);
+        root->data = successor->data;
+        root->right = deleteNode(root->right, successor->data);
     }
     return root;
 }
 
-TreeNode *searchNode(TreeNode *root, int data)
-{
-    if (root == NULL || root->data == data)
-    {
-        return root;
-    }
-    if (data < root->data)
-    {
-        return searchNode(root->left, data);
-    }
-    return searchNode(root->right, data);
-}
-
-TreeNode *inorderSuccessor(TreeNode *root, int data, TreeNode **succ)
+TreeNode *findInorderSuccessorWithTracking(TreeNode *root, int data, TreeNode **succ)
 {
     if (root == NULL)
     {
-        return root;
+        return NULL;
     }
-    if (data >= root->data)
+    if (data < root->data)
     {
-        return inorderSuccessor(root->right, data, succ);
+        *succ = root;
+        return findInorderSuccessorWithTracking(root->left, data, succ);
     }
-    else if (data < root->data)
+    else if (data > root->data)
     {
-        *(succ) = root;
-        return inorderSuccessor(root->left, data, succ);
+        return findInorderSuccessorWithTracking(root->right, data, succ);
     }
     return root;
 }
 
-void successor(TreeNode *n, TreeNode **parent, TreeNode **successor)
+TreeNode *findInorderPredecessorWithTracking(TreeNode *root, int data, TreeNode **pred)
 {
-    *parent = n;
-    *successor = n->right;
-    while ((*successor)->left != NULL)
+    if (root == NULL)
     {
-        *parent = *successor;
-        *successor = (*successor)->left;
+        return NULL;
     }
-}
-
-TreeNode *deleteNode(TreeNode *root, TreeNode *n, TreeNode *parent)
-{
-    TreeNode *succ, *retVal;
+    if (data > root->data)
+    {
+        *pred = root;
+        return findInorderPredecessorWithTracking(root->right, data, pred);
+    }
+    else if (data < root->data)
+    {
+        return findInorderPredecessorWithTracking(root->left, data, pred);
+    }
+    return root;
 }
 
 int main()
@@ -176,11 +144,32 @@ int main()
     printf("\n");
 
     TreeNode *succ = NULL;
-    inorderSuccessor(root, 5, &succ);
-    printf("Inorder successor of 5 is %d\n", succ->data);
+    findInorderSuccessorWithTracking(root, 5, &succ);
+    if (succ != NULL)
+    {
+        printf("Inorder successor of 5 is %d\n", succ->data);
+    }
+    else
+    {
+        printf("No inorder successor for 5\n");
+    }
+
     TreeNode *pred = NULL;
-    inorderPredecessor(root, 5, &succ);
-    printf("Inorder predecessor of 5 is %d\n", succ->data);
+    findInorderPredecessorWithTracking(root, 5, &pred);
+    if (pred != NULL)
+    {
+        printf("Inorder predecessor of 5 is %d\n", pred->data);
+    }
+    else
+    {
+        printf("No inorder predecessor for 5\n");
+    }
+
+    root = deleteNode(root, 5);
+
+    printf("In-order traversal after deleting 5: ");
+    inorderTraversal(root);
+    printf("\n");
 
     return 0;
 }
